@@ -9217,7 +9217,7 @@ function IYUnload()
 end
 
 local CommandsAwaiting = {}
-function LIBRARY.addcmd(arg1, arg2, arg3)
+function LIBRARY:addcmd(arg1, arg2, arg3)
 	CommandsAwaiting[arg1] = {
 		["ali"] = arg2,
 		["callback"] = arg3,
@@ -9225,18 +9225,18 @@ function LIBRARY.addcmd(arg1, arg2, arg3)
 	addcmd(arg1 or "hello", arg2 or { "hi" }, arg3 or function(args, speaker) end)
 end
 
-function LIBRARY.printcmds()
+function LIBRARY:printcmds()
 	return HttpService:JSONEncode(CommandsAwaiting)
 end
-function LIBRARY.notify(arg1, arg2)
+function LIBRARY:notify(arg1, arg2)
 	notify(arg1 or "Hello", arg2 or "No text :(")
 end
 
-function LIBRARY.connect(sign, f)
+function LIBRARY:connect(sign, f)
 	IYConnect(sign, f)
 end
 
-function LIBRARY.init()
+function LIBRARY:init()
 	task.spawn(function()
 		addcmd("exit", { "close", "unload" }, function(args, speaker)
 			notify("Exit", "Closing UI...")
