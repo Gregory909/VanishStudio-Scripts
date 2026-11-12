@@ -9181,15 +9181,12 @@ end)
 
 function IYUnload()
 	IY_Dragging = false
-	-- Stop every tracked service/input connection
 	for _, conn in ipairs(IY_Connections) do
 		pcall(function()
 			conn:Disconnect()
 		end)
 	end
 	table.clear(IY_Connections)
-	-- Destroy the GUI. If we were parented straight into RobloxGui, only remove our own objects
-	-- (never destroy RobloxGui itself).
 	if PARENT and PARENT:IsA("ScreenGui") then
 		pcall(function()
 			PARENT:Destroy()
@@ -9210,7 +9207,6 @@ function IYUnload()
 			end
 		end)
 	end
-	-- Allow the script to be executed again
 	pcall(function()
 		getgenv().IY_LOADED = nil
 	end)
@@ -9273,5 +9269,28 @@ function LIBRARY:init()
 		minimizeHolder()
 		IY_Awaiting = false
 	end)
+	task.spawn(function()
+		while task.wait(1) do
+			task.wait()
+			if aliases and #aliases > 0 then
+				local cmdMap = {}
+				for i, v in pairs(cmds) do
+					cmdMap[v.NAME:lower()] = v
+					for _, alias in pairs(v.ALIAS) do
+						cmdMap[alias:lower()] = v
+					end
+				end
+				for i = 1, #aliases do
+					local cmd = string.lower(aliases[i].CMD)
+					local alias = string.lower(aliases[i].ALIAS)
+					if cmdMap[cmd] then
+						customAlias[alias] = cmdMap[cmd]
+					end
+				end
+				refreshaliases()
+			end
+		end
+	end)
 end
+
 return LIBRARY
