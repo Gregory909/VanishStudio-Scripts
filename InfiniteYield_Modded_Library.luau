@@ -1,3 +1,14 @@
+-- local iy = loadstring(
+--     game:Httpget(
+--         "https://raw.githubusercontent.com/Gregory909/VanishStudio-Scripts/refs/heads/main/InfiniteYield_Modded_Library.luau"
+--     )
+-- )()
+
+--iy.addcmd("test", {"t"}, function(args. lp)
+--    print("This is a test message from Vanish Studio!")
+--end)
+--LIBRARY.init()
+
 -- Credits to nondevelopers for IY Base.
 -- This was smaller modded by returning library with functions like addcmd or others stuffs and DO NOT MODIFED working stuffs that included from original Infinite Yield(credits to original devs also)
 -- SOON gonna add .removecmd function for this lib
@@ -200,6 +211,7 @@ if makefolder and isfolder and writefile and isfile then
 end
 
 IY_Dragging = false
+IY_Awaiting = true
 
 -- [CFG:NAME] Version shown in the title bar. Change/remove freely.
 currentVersion = "0.0.1"
@@ -9178,22 +9190,6 @@ IYConnect(CaptureService.CaptureEnded, function()
 	end)
 end)
 
--- [CFG:COMMANDS] >>> ADD YOUR COMMANDS HERE <<<
--- addcmd(name, {aliases}, function(args, speaker) ... end)
---   args[1], args[2], ... are the words typed after the command; getstring(1, args) joins them.
--- Remember to also add a CMDs[#CMDs + 1] = {...} line (see [CFG:COMMANDS] near the top) so it shows in the list.
---
---   addcmd('hello', {'hi'}, function(args, speaker)
---       notify('Hello', 'Hi ' .. (args[1] or speaker.Name))
---   end)
---
--- Services you can use directly: Players, TweenService, RunService, UserInputService, Lighting, etc.
--- (all defined at the top of the file via the Services table).
-
--- ---------------------------------------------------------------------------
--- exit: closes the UI and unloads everything (usage: `;exit`)
--- Disconnects all tracked connections, destroys the GUI, and clears IY_LOADED so you can re-execute.
--- ---------------------------------------------------------------------------
 function IYUnload()
 	IY_Dragging = false
 	-- Stop every tracked service/input connection
@@ -9231,48 +9227,58 @@ function IYUnload()
 	end)
 end
 
-addcmd("exit", { "close", "unload" }, function(args, speaker)
-	notify("Exit", "Closing UI...")
-	task.wait(1)
-	IYUnload()
-end)
-
-addcmd("print", { "echo" }, function(args, speaker)
-	local msg = getstring(1, args)
-	if msg == nil or msg == "" then
-		msg = "Hello from IY!"
-	end
-	print("[IY]", msg)
-	notify("Print", msg)
-end)
-
+local CommandsAwaiting = {}
 function LIBRARY.addcmd(arg1, arg2, arg3)
-	return addcmd(arg1 or "hello", arg2 or { "hi" }, arg3 or function(args, speaker) end)
+	CommandsAwaiting[arg1] = {
+		["ali"] = arg2,
+		["callback"] = arg3,
+	}
+	addcmd(arg1 or "hello", arg2 or { "hi" }, arg3 or function(args, speaker) end)
 end
 
 function LIBRARY.notify(arg1, arg2)
-	return notify(arg1 or "Hello", arg2 or "No text :(")
+	notify(arg1 or "Hello", arg2 or "No text :(")
 end
 
 function LIBRARY.connect(sign, f)
-	return IYConnect(sign, f)
+	IYConnect(sign, f)
 end
 
-task.spawn(function()
-	task.wait()
-	pcall(function()
-		Credits:TweenPosition(UDim2.new(0, 0, 0.9, 0), "Out", "Quart", 0.2)
-		Logo:TweenSizeAndPosition(UDim2.new(0, 175, 0, 175), UDim2.new(0, 37, 0, 45), "Out", "Quart", 0.3)
-		task.wait(0.4)
-		local OutInfo = TweenInfo.new(0.6, Enum.EasingStyle.Sine, Enum.EasingDirection.Out, 0, false, 0)
-		TweenService:Create(Logo, OutInfo, { ImageTransparency = 1 }):Play()
-		TweenService:Create(IntroBackground, OutInfo, { BackgroundTransparency = 1 }):Play()
-		Credits:TweenPosition(UDim2.new(0, 0, 0.9, 30), "Out", "Quart", 0.2)
-		task.wait(0.2)
+function LIBRARY.init()
+	task.spawn(function()
+		addcmd("exit", { "close", "unload" }, function(args, speaker)
+			notify("Exit", "Closing UI...")
+			task.wait(1)
+			IYUnload()
+		end)
+
+		addcmd("print", { "echo" }, function(args, speaker)
+			local msg = getstring(1, args)
+			if msg == nil or msg == "" then
+				msg = "Hello from IY!"
+			end
+			print("[IY]", msg)
+			notify("Print", msg)
+		end)
+		for i, v in pairs(CommandsAwaiting) do
+			addcmd(i, v["ali"], v["callback"])
+		end
+		task.wait()
+		pcall(function()
+			Credits:TweenPosition(UDim2.new(0, 0, 0.9, 0), "Out", "Quart", 0.2)
+			Logo:TweenSizeAndPosition(UDim2.new(0, 175, 0, 175), UDim2.new(0, 37, 0, 45), "Out", "Quart", 0.3)
+			task.wait(0.4)
+			local OutInfo = TweenInfo.new(0.6, Enum.EasingStyle.Sine, Enum.EasingDirection.Out, 0, false, 0)
+			TweenService:Create(Logo, OutInfo, { ImageTransparency = 1 }):Play()
+			TweenService:Create(IntroBackground, OutInfo, { BackgroundTransparency = 1 }):Play()
+			Credits:TweenPosition(UDim2.new(0, 0, 0.9, 30), "Out", "Quart", 0.2)
+			task.wait(0.2)
+		end)
+		Logo:Destroy()
+		Credits:Destroy()
+		IntroBackground:Destroy()
+		minimizeHolder()
+		IY_Awaiting = false
 	end)
-	Logo:Destroy()
-	Credits:Destroy()
-	IntroBackground:Destroy()
-	minimizeHolder()
-end)
+end
 return LIBRARY
