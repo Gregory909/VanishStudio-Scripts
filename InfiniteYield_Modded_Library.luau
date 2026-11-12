@@ -9254,7 +9254,7 @@ function LIBRARY:init()
 		end)
 		for i, v in pairs(CommandsAwaiting) do
 			addcmd(i, v["ali"], v["callback"])
-            addcmdtext(i, v["description"])
+			addcmdtext(i, i, v["description"])
 		end
 		task.wait()
 		pcall(function()
