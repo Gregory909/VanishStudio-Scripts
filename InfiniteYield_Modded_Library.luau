@@ -9226,7 +9226,7 @@ function LIBRARY.addcmd(arg1, arg2, arg3)
 end
 
 function LIBRARY.printcmds()
-	return HttpService.JSONEncode(CommandsAwaiting)
+	return HttpService:JSONEncode(CommandsAwaiting)
 end
 function LIBRARY.notify(arg1, arg2)
 	notify(arg1 or "Hello", arg2 or "No text :(")
