@@ -1,14 +1,3 @@
--- local iy = loadstring(
---     game:Httpget(
---         "https://raw.githubusercontent.com/Gregory909/VanishStudio-Scripts/refs/heads/main/InfiniteYield_Modded_Library.luau"
---     )
--- )()
-
---iy.addcmd("test", {"t"}, function(args. lp)
---    print("This is a test message from Vanish Studio!")
---end)
---LIBRARY.init()
-
 -- Credits to nondevelopers for IY Base.
 -- This was smaller modded by returning library with functions like addcmd or others stuffs and DO NOT MODIFED working stuffs that included from original Infinite Yield(credits to original devs also)
 -- SOON gonna add .removecmd function for this lib
@@ -9236,6 +9225,9 @@ function LIBRARY.addcmd(arg1, arg2, arg3)
 	addcmd(arg1 or "hello", arg2 or { "hi" }, arg3 or function(args, speaker) end)
 end
 
+function LIBRARY.printcmds()
+	return HttpService.JSONEncode(CommandsAwaiting)
+end
 function LIBRARY.notify(arg1, arg2)
 	notify(arg1 or "Hello", arg2 or "No text :(")
 end
