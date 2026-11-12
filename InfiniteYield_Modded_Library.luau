@@ -9220,7 +9220,7 @@ local CommandsAwaiting = {}
 function LIBRARY:addcmd(arg1, arg2, arg3)
 	CommandsAwaiting[arg1] = {
 		["ali"] = arg3,
-        ["description"] = arg2
+        ["description"] = arg2,
 		["callback"] = arg4,
 	}
 end
