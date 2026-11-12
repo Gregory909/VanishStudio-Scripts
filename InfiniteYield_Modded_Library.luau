@@ -9219,10 +9219,10 @@ end
 local CommandsAwaiting = {}
 function LIBRARY:addcmd(arg1, arg2, arg3)
 	CommandsAwaiting[arg1] = {
-		["ali"] = arg2,
-		["callback"] = arg3,
+		["ali"] = arg3,
+        ["description"] = arg2
+		["callback"] = arg4,
 	}
-	addcmd(arg1 or "hello", arg2 or { "hi" }, arg3 or function(args, speaker) end)
 end
 
 function LIBRARY:printcmds()
@@ -9254,6 +9254,7 @@ function LIBRARY:init()
 		end)
 		for i, v in pairs(CommandsAwaiting) do
 			addcmd(i, v["ali"], v["callback"])
+            addcmdtext(i, v["description"])
 		end
 		task.wait()
 		pcall(function()
